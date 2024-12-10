@@ -1,5 +1,5 @@
 ## "Statistical foundations of machine learning" software
-## R package gbcode 
+## Python gbcodepy 
 ## Author: G. Bontempi
 
 ##  Fair coin tossing random experiment

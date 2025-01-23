@@ -63,8 +63,9 @@ for i in range(p):
     plt.xlabel(f"beta_hat.{i+1}")
     plt.ylabel("Frequency")
     plt.show()
+    input()
 
-# Test unbiasedness and compare variancesfor a set of points
+# Test unbiasedness and compare variances for a set of points
 for i in range(5):
     # Calculate f(x_i)
     f_x_i = X[i, :] @ beta

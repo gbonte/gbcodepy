@@ -34,33 +34,36 @@ yhat = g(a1_2)  #
 
 L = (y-yhat)**2 # (
 
-# Compute analytical gradients
-g11_1 = -2 *(y-yhat) * gp(a1_2) * w11_2 * gp(a1_1) * x   # dL/dw11_1
-g12_1 = -2 *(y-yhat)*gp(a1_2) * w21_2 * gp(a2_1) * x   # dL/dw12_1
-g11_2 = -2 *(y-yhat)*gp(a1_2) * z1                     # dL/dw11_2
-g21_2 = -2 *(y-yhat)*gp(a1_2) * z2                     # dL/dw21_2
+# Compute analytical gradients  by symbolic differentiation
+Sgrad_L_w11_1 = -2 *(y-yhat) * gp(a1_2) * w11_2 * gp(a1_1) * x   # dL/dw11_1
+Sgrad_L_w12_1 = -2 *(y-yhat)*gp(a1_2) * w21_2 * gp(a2_1) * x   # dL/dw12_1
+Sgrad_L_w11_2 = -2 *(y-yhat)*gp(a1_2) * z1                     # dL/dw11_2
+Sgrad_L_w21_2 = -2 *(y-yhat)*gp(a1_2) * z2                     # dL/dw21_2
 
 
 
+L.backward()
+
+grad_L_w11_1 = w11_1.grad # grad(L, w11_1, retain_graph=True)
+grad_L_w12_1= w12_1.grad  #grad(L, w12_1, retain_graph=True)
+grad_L_w11_2 =w11_2.grad  # grad(L, w11_2, retain_graph=True)
+grad_L_w21_2= w21_2.grad  # grad(L, w21_2, retain_graph=True)
 
 
-
-
-grad_L_w11_2 = grad(L, w11_2, retain_graph=True)
-grad_L_w21_2= grad(L, w21_2, retain_graph=True)
-grad_L_w11_1 = grad(L, w11_1, retain_graph=True)
-grad_L_w12_1= grad(L, w12_1, retain_graph=True)
-
+## Comparison of symbiolic and numerical differentiation
 
 print('L=',L.detach().numpy(), '\n dL/dw11_2=', 
-      grad_L_w11_2,':',  g11_2.detach().numpy())
+      grad_L_w11_2,':',  Sgrad_L_w11_2.detach().numpy())
 
 print('\n dL/dw21_2=', 
-      grad_L_w21_2,':',  g21_2.detach().numpy())
+      grad_L_w21_2,':',  Sgrad_L_w21_2.detach().numpy())
 
 print('\n dL/dw11_1=', 
-      grad_L_w11_1,':',  g11_1.detach().numpy())
+      grad_L_w11_1,':',  Sgrad_L_w11_1.detach().numpy())
 
 print('\n dL/dw12_1=', 
-      grad_L_w12_1,':',  g12_1.detach().numpy())
+      grad_L_w12_1,':',  Sgrad_L_w12_1.detach().numpy())
+
+
+
   

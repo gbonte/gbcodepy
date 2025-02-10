@@ -1,5 +1,5 @@
 import numpy as np
-from scipy import stats
+
 
 # Monte Carlo estimation of parameters
 

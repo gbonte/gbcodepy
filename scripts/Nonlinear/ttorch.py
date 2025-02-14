@@ -1,4 +1,7 @@
-
+## # "Statistical foundations of machine learning" software
+# ttorch.py
+# Author: G. Bontempi
+# assessment of some torch FNN in a regression task
 
 import torch
 import torch.nn as nn

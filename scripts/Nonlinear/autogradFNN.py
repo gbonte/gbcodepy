@@ -50,7 +50,7 @@ grad_L_w11_2 =w11_2.grad  # grad(L, w11_2, retain_graph=True)
 grad_L_w21_2= w21_2.grad  # grad(L, w21_2, retain_graph=True)
 
 
-## Comparison of symbiolic and numerical differentiation
+## Comparison of symbolic and numerical differentiation
 
 print('L=',L.detach().numpy(), '\n dL/dw11_2=', 
       grad_L_w11_2,':',  Sgrad_L_w11_2.detach().numpy())

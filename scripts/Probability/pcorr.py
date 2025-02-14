@@ -1,5 +1,5 @@
 # "INFOF422 Statistical foundations of machine learning" course
-# R package gbcode 
+#  package gbcodepy
 # Author: G. Bontempi
 ## pcorr.py
 ## 2 independent and non correlated random variables Z1 and Z2 which are partially dependent (and correlated)

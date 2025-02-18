@@ -115,7 +115,7 @@ num_epochs = 30
 
 for epoch in range(num_epochs):
     
-    model.train()
+    #model.train()
     for batch_idx, (x, y) in enumerate(train_loader):
 
         yhat = model(x)

@@ -79,7 +79,7 @@ for r in range(1, MaxDegree + 1):
         if rr == 1:
             ax.plot(x_ts, Y_ts, label='True Function', color='blue', linewidth=2)
             ax.scatter(x, Y, label='Data Points', color='black')
-
+            plt.ylim(min(Y), max(Y))
         pr = model.predict(sm.add_constant(X_ts))
         Pr.append(pr)
         ax.plot(x_ts, pr, color='red', alpha=0.1)
@@ -102,7 +102,8 @@ for r in range(1, MaxDegree + 1):
     clear_output(wait=True)  # Clear the output
     
     plt.close(fig)  # Close the figure
-    time.sleep(1) 
+    time.sleep(0.1) 
+    input(" ")
     
     
 

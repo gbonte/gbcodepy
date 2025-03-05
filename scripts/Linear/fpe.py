@@ -10,7 +10,7 @@ from numpy.linalg import pinv
 import numpy as np
 import matplotlib.pyplot as plt
 from IPython.display import display, clear_output
-import ipywidgets as widgets
+#import ipywidgets as widgets
 import matplotlib
 import time 
 
@@ -19,7 +19,7 @@ np.random.seed(0)
 n = 3  # number of input variables
 p = n + 1
 p_max = 25
-N = 35  # number of training data
+N = 50  # number of training data
 x = np.sort(np.random.uniform(-1, 1, N))
 
 X = np.ones((N, 1))
@@ -75,47 +75,49 @@ for i in range(2, min(p_max, N - 1) + 1):
     FPE.append(((1 + i / N) / (1 - i / N)) * (e.T @ e) / N)
     PSE.append((e.T @ e) / N + 2 * sde2hat * i / N)
     
-    plt.title(f"degree={i-1}; MISE_emp={R_emp[i-2]:.4f}; FPE={FPE[i-2]:.2f}; PSE={PSE[i-2]:.3f}")
+    plt.title(f"degree={i-1}; MISE_emp={R_emp[i-2]:.4f}; FPE={FPE[i-2]:.2f}; PSE={PSE[i-2]:.3f}",
+              fontsize=18)
     
     display(fig)
     clear_output(wait=True)  # Clear the output
     
     plt.close(fig)  # Close the figure
     time.sleep(0.1)
-    input(" ")
+    #input(" ")
     
     
     plt.ioff()  # Disable interactive mode
 
 fig, axs = plt.subplots(2, 2, figsize=(12, 10))
-
+## max p to visualise
+p_max2=p_max
 axs[0, 0].plot(np.array(no_par) - 1, R_emp, label='Empirical risk')
 axs[0, 0].set_xlabel("# parameters")
 axs[0, 0].set_ylabel("Empirical risk")
 axs[0, 0].set_title("Empirical risk")
-axs[0, 0].set_xlim(2, 10)
-axs[0, 0].set_ylim(0.05, 0.4)
+axs[0, 0].set_xlim(2, p_max2)
+axs[0, 0].set_ylim(0, 0.4)
 
 axs[0, 1].plot(np.array(no_par) - 1, MISE, label='Generalization error')
 axs[0, 1].set_xlabel("# parameters")
 axs[0, 1].set_ylabel("Generalization error")
 axs[0, 1].set_title("Generalization error")
-axs[0, 1].set_xlim(2, 10)
+axs[0, 1].set_xlim(2, p_max2)
 axs[0, 1].set_ylim(1, 4)
 
 axs[1, 0].plot(np.array(no_par) - 1, FPE, label='FPE')
 axs[1, 0].set_xlabel("# parameters")
 axs[1, 0].set_ylabel("FPE")
 axs[1, 0].set_title("FPE")
-axs[1, 0].set_xlim(2, 10)
-axs[1, 0].set_ylim(0.05, 0.5)
+axs[1, 0].set_xlim(2, p_max2)
+axs[1, 0].set_ylim(0.1, 0.5)
 
 axs[1, 1].plot(np.array(no_par) - 1, PSE, label='PSE')
 axs[1, 1].set_xlabel("# parameters")
 axs[1, 1].set_ylabel("PSE")
 axs[1, 1].set_title("PSE")
-axs[1, 1].set_xlim(2, 10)
-axs[1, 1].set_ylim(0.05, 0.5)
+axs[1, 1].set_xlim(2, p_max2)
+axs[1, 1].set_ylim(0.1, 0.5)
 
 plt.tight_layout()
 plt.show()

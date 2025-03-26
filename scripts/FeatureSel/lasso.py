@@ -10,14 +10,14 @@ from cvxopt import matrix, solvers
 # min_x 1/2 x^T D x-d^Tx subject to A^Tx>=b
 
 N = 25
-n = 15
+n = 20
 # number of inoput features
 
 # Create a sequence from 7 to 0.01 with step -0.05 (values >= 0.01)
 LAM = np.arange(7, 0.0, -0.05)
 Remp = []
 X = np.random.randn(N * n).reshape((N, n))
-Y = 3 * X[:, 0] + X[:, 1] - X[:, n - 1] + np.random.randn(N) * 0.1
+Y = 3 * X[:, 0] + X[:, 1] - 0.5*X[:, n - 1] + np.random.randn(N) * 0.5
 
 def lassols(X, Y, lambda_val=0):
     eps = 1e-10
@@ -96,12 +96,13 @@ BETA = np.array(BETA)
 axs[2].set_xlabel("L")
 axs[2].set_ylabel("Estimation")
 axs[2].set_ylim(-5, 5)
+axs[2].set_xlim(-2, 7)
 # Plot the first estimation
 axs[2].plot(LAM, BETA[:, 0], linestyle="-", marker="", label="b1")
 # Plot the remaining estimations
 for i in range(1, n):
     axs[2].plot(LAM, BETA[:, i], linestyle="-", marker="", label=f"b{i+1}")
-plt.legend()
+plt.legend(loc='lower left')
 plt.tight_layout()
 plt.show()
     

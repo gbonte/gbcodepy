@@ -31,7 +31,7 @@ Yts = np.dot(Xts[:, :p], beta) + np.random.normal(scale=sd_w, size=Nts)
 np.random.seed(0)
 
 R = 15000
-fset = []      # list to store selected features (using R-style indices: 2 ... NCOL(X))
+fset = []      
 bestr = []     # internal MSE computed with LOO
 bests = []     # test MSE computed on Xts
 
@@ -53,7 +53,7 @@ for it in range(1, 25):
             X_train = X_train_all[:, cols]
             X_test_sample = X[i, cols]
             Yhati = pred( X_train, Y_train_all, X_test_sample.reshape(1, -1))
-            e[i] = Y[i] - Yhati
+            e[i] = Y[i] - Yhati[0]
         mse = np.mean(e**2)
         MSEf[f] = mse
 

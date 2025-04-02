@@ -1,8 +1,18 @@
+# "INFOF422 Statistical foundations of machine learning" course
+# ROCclass.py
+# Author: G. Bontempi
+
+## 3 classes classification problem
+## One-vs-all multi-class strategy
+## Assessment of 5 different classifiers (QDA, LDA, Naive Bayes, KNN10, KNN3)  
+## by using leave-one-out and 
+## plotting of the respective ROC curves
+
 import numpy as np
 import matplotlib.pyplot as plt
 import pyreadr
 import math
-
+from scipy.stats import norm
 
 result = pyreadr.read_r("EXAM.2s.2324.Rdata")  
 # Extract objects Q3.X and Q3.Y exactly as loaded from the Rdata file
@@ -18,6 +28,7 @@ for label in ["setosa", "virginica", "versicolor"]:
     
     # Create Y as a numeric array of zeros with length N
     Y = np.zeros(N)
+    ## One vs all strategy to deal with the multiclass task
     # Set Y to 1 where Q3.Y equals the current label
     indices_label = np.where(Q3_Y == label)[0]
     Y[indices_label] = 1
@@ -26,7 +37,7 @@ for label in ["setosa", "virginica", "versicolor"]:
     N1 = len(I1)
     N0 = len(I0)
     
-    # Define the KNN function
+    # KNN function
     def KNN(X, Y, q, k):
         # N: number of rows in X
         N_local = X.shape[0]
@@ -37,7 +48,9 @@ for label in ["setosa", "virginica", "versicolor"]:
         # Return the proportion of the nearest neighbors that have label 1
         return np.count_nonzero(Y[index] == 1) / k
 
-    # Define the MD function
+    # MD function: it returns as score exp(-d1)/( exp(-d1)+exp(-d0))
+    # where d1 is the Euclidean distance of q from mu1 
+    # and d0 is the Euclidean distance of q from mu0
     def MD(X, Y, q):
         N_local = len(Y)
         n = X.shape[1]
@@ -49,7 +62,8 @@ for label in ["setosa", "virginica", "versicolor"]:
         d0 = np.sum((q - mu0) ** 2)
         return np.exp(-d1) / (np.exp(-d1) + np.exp(-d0))
 
-    # Define the QDA function
+    # QDA function
+    ## see formula in slide 30 course classification 
     def QDA(Xtr, Ytr, q):
         n = Xtr.shape[1]
         Ntr = Xtr.shape[0]
@@ -75,7 +89,47 @@ for label in ["setosa", "virginica", "versicolor"]:
         g1 = -0.5 * quad1 - n/2 * np.log(2 * np.pi) - 0.5 * np.log(np.linalg.det(Sigma1)) + np.log(P1)
         return np.exp(g1) / (np.exp(g0) + np.exp(g1))
     
-    # Define the LDA function
+    ## Naive Bayes classifier
+    def NB(X, Y, q):
+        # Determine the number of observations and number of features
+        N = len(Y)
+        n = X.shape[1]
+        
+        # Initialize prediction vector
+        Yhat = np.zeros(N)
+        
+        # Indices where Y equals 1 and -1 respectively
+        I1 = np.where(Y == 1)[0]
+        I0 = np.where(Y == 0)[0]
+        
+        # Compute probabilities based on class frequencies
+        p1 = len(I1) / N
+        p0 = 1 - p1
+        
+        
+        p1x = 1
+        p0x = 1
+        
+        # Loop through each feature
+        for j in range(n):
+            # Compute mean and sample standard deviation for feature j for class 1
+            mean_I1 = np.mean(X[I1, j])
+            sd_I1 = np.std(X[I1, j], ddof=1)
+            # Compute mean and sample standard deviation for feature j for class -1
+            mean_I0 = np.mean(X[I0, j])
+            sd_I0 = np.std(X[I0, j], ddof=1)
+            
+            # Update likelihoods for class 1 and class -1 using the normal density
+            p1x = p1x * norm.pdf(q[j], loc=mean_I1, scale=sd_I1)
+            p0x = p0x * norm.pdf(q[j], loc=mean_I0, scale=sd_I0)
+        
+        # Compute the posterior probability for class 1
+        Yhat = p1x * p1 / (p1x * p1 + p0x * p0)
+        
+        return Yhat
+
+# Define the LDA function
+## see formula in slide 32 course classification 
     def LDA(Xtr, Ytr, q):
         n = Xtr.shape[1]
         Ntr = Xtr.shape[0]
@@ -87,10 +141,10 @@ for label in ["setosa", "virginica", "versicolor"]:
         sigma2 = np.mean(np.var(Xtr, axis=0, ddof=1))
         mu0 = np.mean(Xtr[I0_local, :], axis=0)
         mu1 = np.mean(Xtr[I1_local, :], axis=0)
-        # In R, xts, mu0, mu1 are converted to row vectors; in Python we use 1D arrays
+        
         # Compute the necessary quadratic forms
-        g0 = -1/(2*sigma2) * (np.dot(q, q) - 2 * np.dot(mu0, q) + np.dot(mu0, mu0)) + np.log(P0)
-        g1 = -1/(2*sigma2) * (np.dot(q, q) - 2 * np.dot(mu1, q) + np.dot(mu1, mu1)) + np.log(P1)
+        g0 = -1/(2*sigma2) * np.linalg.norm(q-mu0) + np.log(P0)
+        g1 = -1/(2*sigma2) * np.linalg.norm(q-mu1) + np.log(P1)
         return np.exp(g1) / (np.exp(g0) + np.exp(g1))
     
     # Compute predictions for each observation using leave-one-out cross-validation
@@ -99,6 +153,7 @@ for label in ["setosa", "virginica", "versicolor"]:
     Yhat2 = np.zeros(N_local)
     Yhat3 = np.zeros(N_local)
     Yhat4 = np.zeros(N_local)
+    Yhat5 = np.zeros(N_local)
     
     for i in range(N_local):
         # Exclude the i-th observation from X and Y for training
@@ -109,16 +164,19 @@ for label in ["setosa", "virginica", "versicolor"]:
         Yhat2[i] = KNN(X_train, Y_train, X[i, :], k=10)
         Yhat3[i] = LDA(X_train, Y_train, X[i, :])
         Yhat4[i] = KNN(X_train, Y_train, X[i, :], k=3)
+        Yhat5[i] = NB(X_train, Y_train, X[i, :])
     
     # Sort prediction arrays in decreasing order while retaining the indices (s1, s2, s3, s4)
     s1_indices = np.argsort(-Yhat1)
     s2_indices = np.argsort(-Yhat2)
     s3_indices = np.argsort(-Yhat3)
     s4_indices = np.argsort(-Yhat4)
+    s5_indices = np.argsort(-Yhat4)
     s1 = {"values": Yhat1[s1_indices], "ix": s1_indices}
     s2 = {"values": Yhat2[s2_indices], "ix": s2_indices}
     s3 = {"values": Yhat3[s3_indices], "ix": s3_indices}
     s4 = {"values": Yhat4[s4_indices], "ix": s4_indices}
+    s5 = {"values": Yhat5[s5_indices], "ix": s5_indices}
     
     # Initialize empty lists for TPR and FPR for each method
     TPR1 = []
@@ -129,6 +187,8 @@ for label in ["setosa", "virginica", "versicolor"]:
     FPR3 = []
     TPR4 = []
     FPR4 = []
+    TPR5 = []
+    FPR5 = []
     
     Yts = Y.copy()
     
@@ -151,6 +211,10 @@ for label in ["setosa", "virginica", "versicolor"]:
         I4_indices = np.where(Yhat4 >= th)[0]
         TPR4.append(len(np.where(Yts[I4_indices] == 1)[0]) / N1 if N1 > 0 else 0)
         FPR4.append(len(np.where(Yts[I4_indices] == 0)[0]) / N0 if N0 > 0 else 0)
+        
+        I5_indices = np.where(Yhat5 >= th)[0]
+        TPR5.append(len(np.where(Yts[I5_indices] == 1)[0]) / N1 if N1 > 0 else 0)
+        FPR5.append(len(np.where(Yts[I5_indices] == 0)[0]) / N0 if N0 > 0 else 0)
     
     # Plotting the ROC curves for each method
     plt.figure()
@@ -164,6 +228,8 @@ for label in ["setosa", "virginica", "versicolor"]:
     plt.plot(FPR3, TPR3, color="red", label="LDA")
     # Plot KNN with k=3 in green
     plt.plot(FPR4, TPR4, color="green", label="KNN3")
+    # Plot NB in orange
+    plt.plot(FPR4, TPR4, color="orange", label="NB")
     
     plt.xlabel("FPR")
     plt.ylabel("TPR")

@@ -5,6 +5,7 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
+import time
 
 def rls(x, y, t, P, mu=1):
     x = np.array(x).reshape(-1, 1)
@@ -23,7 +24,7 @@ y = np.sin(X) + 0.1 * np.random.normal(size=N)
 n = 1
 t = np.zeros((2, 1))
 P = 500 * np.eye(n + 1)
-mu = 0.97
+mu = 0.96
 
 #plt.ion()  # Turn on interactive mode
 
@@ -51,7 +52,7 @@ for i in range(N):
         ax.plot(X_plot, y_pred, 'r-')
         
         display(fig)
-        clear_output(wait=True)  # Clear the output
+#        clear_output(wait=True)  # Clear the output
     
         plt.close(fig)  # Close the figure
         time.sleep(0.5)

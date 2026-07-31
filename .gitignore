@@ -1,1 +1,15 @@
+# datasets
+scripts/**/data/
+
+# pytorch
+*.pth
+*.pt
+
+# jupyter
+.ipynb_checkpoints/
+
+# caches
+__pycache__/
+*.pyc
+
 scripts/Deep/data/elliptic_bitcoin_dataset/

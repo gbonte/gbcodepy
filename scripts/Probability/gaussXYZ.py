@@ -49,6 +49,8 @@ for th in np.arange(0, np.pi + np.pi/8, np.pi/8):
         ax.set_zlabel('Probability Density')
         ax.view_init(elev=30, azim=30)
         plt.title(f"BIVARIATE; Rotation={th:.3f}; Axis 1={ax1}; Axis 2={ax2}")
-        plt.show()
-        input("Press [enter] to continue")
+        plt.show(block=False)
+        plt.pause(0.1)
+        input("Press Enter for next figure...")
+        plt.close()
 

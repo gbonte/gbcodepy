@@ -3,10 +3,10 @@ import requests
 import zipfile
 
 # Replace with your Dropbox direct-download link (dl=1)
-URL = "https://www.dropbox.com/scl/fi/xxxxxxxx/data.zip?rlkey=yyyyyyyy&dl=1"
+URL = "https://www.dropbox.com/scl/fi/a1496wawrmgte9qpfcd3z/Data.zip?rlkey=jq6koinu181nogaa3qeokjxiq&dl=1"
 
-DATA_DIR = Path("Data")
-ZIP_FILE = DATA_DIR / "data.zip"
+DATA_DIR = Path("")
+ZIP_FILE = DATA_DIR / "Data.zip"
 
 # Create Data directory
 DATA_DIR.mkdir(exist_ok=True)
@@ -22,6 +22,7 @@ if not ZIP_FILE.exists():
             for chunk in r.iter_content(chunk_size=1024 * 1024):
                 if chunk:
                     f.write(chunk)
+                    print(".",end="",flush=True)
 
     print("Download complete.")
 else:

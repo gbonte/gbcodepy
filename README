@@ -9,11 +9,11 @@ and the book
 https://leanpub.com/statisticalfoundationsofmachinelearning
 
 
-## Downloading data
+## Downloading datasets for the package
 
 Large files are not stored in GitHub.
 
 Run:
-bash
-pip install -r requirements.txt
-python download.py
+- bash
+- pip install -r requirements.txt
+- python download.py
